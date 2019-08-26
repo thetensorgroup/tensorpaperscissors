@@ -3,6 +3,17 @@ import {connect} from 'react-redux'
 import {fetchDataThunk, postRoundsThunk} from '../store/rootReducer'
 import LossGraph from './LossGraph'
 import PredictionGraph from './PredictionGraph'
+// import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button'
+
+// const useStyles = makeStyles(theme => ({
+//   button: {
+//     margin: theme.spacing(1),
+//   },
+//   input: {
+//     display: 'none',
+//   },
+// }));
 
 let index = 0
 let model = null
@@ -12,11 +23,11 @@ class Tensor extends Component {
     super()
     this.state = {
       tensor: {
-        loss: 0,
+        loss: 0.5,
         epoch: 0,
         model: null
       },
-      learningRate: 0.2,
+      learningRate: 20,
       epochs: 5,
       user: [],
       cpu: [],
@@ -157,7 +168,6 @@ class Tensor extends Component {
     let result = 0
     for (let i = 0; i < outcomes.length; i++) {
       if (outcomes[i].every((val, idx) => val === game[idx])) {
-        console.log(i)
         i >= 3 ? result++ : result--
       }
     }
@@ -177,7 +187,7 @@ class Tensor extends Component {
     let labelList = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     data = this.props.dataSet
 
-    function setup() {
+    const setup = () => {
       let gameHistory = [] //maybe nest
       let userHistory = []
       data.forEach(el => {
@@ -204,7 +214,7 @@ class Tensor extends Component {
       model.add(hidden)
       model.add(output)
 
-      const LEARNING_RATE = this.state.learningRate
+      const LEARNING_RATE = this.state.learningRate * 0.01
       const optimizer = tf.train.sgd(LEARNING_RATE)
 
       model.compile({
@@ -246,9 +256,6 @@ class Tensor extends Component {
   }
 
   handleChange(event) {
-    if (event.target.name === 'learningRate') {
-      event.target.value /= 100
-    }
     this.setState({[event.target.name]: event.target.value})
   }
 
@@ -258,6 +265,7 @@ class Tensor extends Component {
     localTies = this.state.wl.filter(el => el === 0)
     let localTotalGames = this.state.wl.length - localTies.length
     let localWinrate = localWins.length / localTotalGames
+    if (isNaN(localWinrate)) localWinrate = 'No Matches Completed'
     let totalGames
     let winStatus
     let wins
@@ -282,14 +290,18 @@ class Tensor extends Component {
       <div>
         <div className="sample">
           <div className="score">
-            SCOREBOARD: <br />
-            CPU WINRATE: {winrate && winrate}
+              <div className="score-title">
+                  BEST OF 9 <br /><br />
+        </div>
+            CPU WINRATE: {winrate && winrate.toFixed(2)}
             <br />
-            USER WINRATE: {localWinrate && localWinrate}
+            USER WINRATE: {localWinrate === 'No Matches Completed' ?
+                    'Infinity' : localWinrate.toFixed(2)}
+            <br />
             <br />
             {this.state.results &&
               this.state.results.map((el, idx) => (
-                <div>
+                <div key={Math.random()}>
                   {' '}
                   GAME {idx + 1}: {el}{' '}
                 </div>
@@ -297,39 +309,55 @@ class Tensor extends Component {
           </div>
 
           <div className="userInput">
+              <div className="hands">
             <h1>
               CPU: <img src={this.state.cpuImg} />
             </h1>
             <h1>
               USER: <img src={this.state.userImg} />
             </h1>
-            <button
+        </div>
+            <div className="input-buttons">
+                <div>
+            <Button
               id="prock"
               onClick={() => {
                 this.play([1, 0, 0])
                 this.userButton('https://i.imgur.com/adraueg.jpg')
               }}
+              variant="contained"
+              color="inherit"
             >
               ROCK
-            </button>
-            <button
+            </Button>
+        </div>
+        <div>
+            <Button
               id="ppaper"
               onClick={() => {
                 this.play([0, 1, 0])
                 this.userButton('https://i.imgur.com/f85yLy6.jpg')
               }}
+              variant="contained"
+              color="inherit"
             >
               PAPER
-            </button>
-            <button
+            </Button>
+        </div>
+        <div>
+            <Button
               id="pscissors"
               onClick={() => {
                 this.play([0, 0, 1])
                 this.userButton('https://i.imgur.com/eGRmmHO.jpg ')
               }}
+              variant="contained"
+              color="inherit"
             >
               SCISSORS
-            </button>
+            </Button>
+        </div>
+        </div>
           </div>
           <div className="tensorData">
             <p>LOSS: {this.state && this.state.tensor.loss} </p>
@@ -346,7 +374,12 @@ class Tensor extends Component {
                 value={this.state.epochs}
                 className="slider"
               />
-              <div>LEARNING RATE: {this.state.learningRate}</div>
+              <br />
+              <br />
+
+              <div>
+                LEARNING RATE: {(this.state.learningRate * 0.01).toFixed(2)}
+              </div>
 
               <input
                 name="learningRate"
@@ -380,7 +413,6 @@ class Tensor extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log('hi', state)
   return {
     dataSet: state.rootReducer.dataSet
   }
