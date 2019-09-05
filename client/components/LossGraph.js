@@ -19,15 +19,12 @@ export default class LossGraph extends Component {
 
   componentWillReceiveProps() {
     value = this.props.loss
-    console.log(value)
   }
 
   createGraph() {
-    console.log(this.state.data, 'THIS DOT STATE')
-    var n = 40
+    var n = 13
     var random = d3.randomNormal(0, 0.2)
     var data = this.state.data
-    console.log(data, 'random')
     // data = [1, 2, 4];
     var svg = d3.select('svg'),
       margin = {top: 20, right: 20, bottom: 20, left: 40},
@@ -97,27 +94,10 @@ export default class LossGraph extends Component {
     }
   }
 
-  // tick(value) {
-  //   // Push a new data point onto the back.
-  //   data.push(1);
-  //   // Redraw the line.
-  //   d3.select(this)
-  //     .attr("d", line)
-  //     .attr("transform", null);
-  //   // Slide it to the left.
-  //   d3.active(this)
-  //     .attr("transform", "translate(" + x(-1) + ",0)")
-  //     .transition();
-  //   //.on('start', tick);
-  //   // Pop the old data point off the front.
-  //   data.shift();
-  // }
-
   render() {
-    // this.props.loss && this.createGraph();
     return (
       <div>
-        <svg width="960" height="500" />
+        <svg width="700" height="400" />
       </div>
     )
   }

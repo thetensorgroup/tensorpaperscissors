@@ -13,18 +13,24 @@ export default class PredictionGraph extends Component {
           data={[
             {
               name: 'Rock',
-              data: {'0': this.props.allResults[0]},
-              color: 'red'
+              data: {
+                '0': this.props.allResults[0] ? this.props.allResults[0] : 0.3
+              },
+              color: '#173D4E'
             },
             {
-              name: 'Rock',
-              data: {'1': this.props.allResults[1]},
-              color: 'green'
+              name: 'Paper',
+              data: {
+                '0': this.props.allResults[1] ? this.props.allResults[1] : 0.3
+              },
+              color: '#6AAAD6'
             },
             {
-              name: 'Rock',
-              data: {'2': this.props.allResults[2]},
-              color: 'blue'
+              name: 'Scissors',
+              data: {
+                '0': this.props.allResults[2] ? this.props.allResults[2] : 0.3
+              },
+              color: 'orange'
             }
           ]}
           height={400}
